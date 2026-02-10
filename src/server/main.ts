@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import path from "path";
-dotenv.config({ path: path.resolve(process.cwd(), "../.env") });
+dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
 import Anthropic from "@anthropic-ai/sdk";
 import express from "express";
@@ -16,7 +16,7 @@ const sessions = new Map<string, Message[]>();
 
 app.get("/hello", async (_, res) => {
   const message = await anthropic.messages.create({
-    model: "claude-opus-4-6",
+    model: "Claude-Haiku-3",
     max_tokens: 1024,
     messages: [{ role: "user", content: "Hello, world!" }],
   });
