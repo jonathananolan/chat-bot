@@ -1,14 +1,16 @@
+export type UUID = `${string}-${string}-${string}-${string}-${string}`;
+
 export interface Message {
   role: "user" | "assistant";
   content: string;
 }
 
 export interface ChatRequest {
-  sessionId?: string;
+  sessionId: UUID;
   message: string;
 }
 
-export interface ChatResponse {
-  sessionId: string;
-  history: Message[];
+export interface Conversation {
+  sessionId: UUID;
+  messages: Message[];
 }
