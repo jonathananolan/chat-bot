@@ -2,9 +2,14 @@ import express from "express";
 import { ChatRequest, UUID } from "../shared/types.js";
 import { sendChatMessage } from "./services/chat.js";
 import { Storage } from "./storage.js";
+import { getAuth } from "./utils/auth.js";
+import { toNodeHandler } from "better-auth/node";
 
 export function createApp(storage: Storage) {
   const app = express();
+
+  app.use("/api/auth", toNodeHandler(getAuth()));
+
   app.use(express.json());
 
   app.get("/hello", async (_, res) => {
