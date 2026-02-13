@@ -1,6 +1,6 @@
 import "./App.css";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Conversation, UUID } from "../shared/types";
 import {
   sendMessage,
@@ -21,18 +21,39 @@ import {
   DrawerTrigger,
 } from "../components/ui/drawer";
 import { Menu, Plus, MessageSquare, Loader2 } from "lucide-react";
+import { useParams, useNavigate } from "react-router";
+import { SignInPage } from "./components/signinpage";
+import { authClient } from "../lib/auth-client";
 
 function App() {
+  const { data: session, isPending } = authClient.useSession();
+
   const [conversationIds, setConversationIds] = useState<UUID[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<UUID | null>(null);
   const [chat, setChat] = useState<Conversation | null>(null);
   const [input, setInput] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { uuid } = useParams();
+  const navigate = useNavigate();
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  const UUID_REGEX =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  useEffect(() => {
+    if (uuid && UUID_REGEX.test(uuid) && uuid !== activeSessionId) {
+      handleSelectConversation(uuid as UUID);
+    }
+  }, [uuid]);
 
   useEffect(() => {
     getConversations().then((data) => setConversationIds(data.sessionIds));
   }, []);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chat?.messages]);
 
   const handleNewConversation = async () => {
     const { sessionId } = await createConversation();
@@ -40,12 +61,14 @@ function App() {
     setActiveSessionId(sessionId);
     setChat({ sessionId, messages: [] });
     setDrawerOpen(false);
+    navigate(`/chat/${sessionId}`);
   };
 
   const handleSelectConversation = async (sessionId: UUID) => {
     setActiveSessionId(sessionId);
     const conversation = await getConversation(sessionId);
     setChat(conversation);
+    navigate(`/chat/${sessionId}`);
     setDrawerOpen(false);
   };
 
@@ -73,6 +96,10 @@ function App() {
       }));
       setInput("");
 
+      if (uuid !== sessionId) {
+        navigate(`/chat/${sessionId}`);
+      }
+
       const response = await sendMessage(userMessage, sessionId);
       setChat(response);
     } finally {
@@ -89,6 +116,9 @@ function App() {
     setChat(null);
     setInput("");
   };
+
+  if (isPending) return <div>Loading...</div>;
+  if (!session) return <SignInPage />;
 
   return (
     <div className="flex flex-col h-screen overflow-hidden max-w-200 mx-auto">
@@ -138,6 +168,7 @@ function App() {
             </div>
           ))}
         </div>
+        <div ref={bottomRef} />
       </ScrollArea>
 
       <div className="flex items-end gap-2 p-4">
