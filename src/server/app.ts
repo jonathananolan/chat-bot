@@ -12,14 +12,14 @@ export function createApp(storage: Storage) {
 
   app.use(express.json());
 
-  app.get("/hello", async (_, res) => {
+  app.get("/api/hello", async (_, res) => {
     const text = await sendChatMessage([
       { role: "user", content: "Hello, world!" },
     ]);
     res.json({ text });
   });
 
-  app.post("/send-message", async (req, res) => {
+  app.post("/api/send-message", async (req, res) => {
     const { sessionId, message } = req.body as ChatRequest;
 
     const conversation = await storage.getConversation(sessionId);
@@ -44,23 +44,23 @@ export function createApp(storage: Storage) {
     res.json(updated);
   });
 
-  app.post("/reset", async (req, res) => {
+  app.post("/api/reset", async (req, res) => {
     const { sessionId } = req.body as { sessionId: UUID };
     await storage.deleteConversation(sessionId);
     res.sendStatus(200);
   });
 
-  app.post("/create-conversation", async (req, res) => {
+  app.post("/api/create-conversation", async (req, res) => {
     const sessionId = await storage.createConversation();
     res.json({ sessionId });
   });
 
-  app.get("/get-conversations", async (req, res) => {
+  app.get("/api/get-conversations", async (req, res) => {
     const sessionIds = await storage.getConversations();
     res.json({ sessionIds });
   });
 
-  app.get("/get-conversation/:sessionId", async (req, res) => {
+  app.get("/api/get-conversation/:sessionId", async (req, res) => {
     const conversation = await storage.getConversation(
       req.params.sessionId as UUID,
     );

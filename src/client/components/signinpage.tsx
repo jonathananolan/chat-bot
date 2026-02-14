@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { authClient } from "../../lib/auth-client.js";
+import { authClient } from "../lib/auth-client.js";
 import React from "react";
 import ReactDOM from "react-dom/client";
 
