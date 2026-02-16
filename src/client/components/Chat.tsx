@@ -1,33 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Conversation, UUID } from "../../shared/types";
-import {
-  sendMessage,
-  resetSession,
-  createConversation,
-  getConversations,
-  getConversation,
-} from "../api/chat";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Card } from "./ui/card";
 import { ScrollArea } from "./ui/scroll-area";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "./ui/drawer";
-import { Menu, Plus, MessageSquare, Loader2 } from "lucide-react";
-import { useParams, useNavigate } from "react-router";
-import { SignInPage } from "./signinpage";
-import { authClient } from "../lib/auth-client";
+import { Loader2 } from "lucide-react";
 
 type ChatProps = {
   chat: Conversation | null;
   input: string;
   loading: boolean;
-  uuid: string | undefined;
   activeSessionId: string | null;
 
   setInput: (value: string) => void;
@@ -40,7 +22,6 @@ export function Chat({
   chat,
   input,
   loading,
-  uuid,
   activeSessionId,
   handleSend,
   setInput,
@@ -52,15 +33,6 @@ export function Chat({
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat?.messages]);
-
-  const UUID_REGEX =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-  useEffect(() => {
-    if (uuid && UUID_REGEX.test(uuid) && uuid !== activeSessionId) {
-      handleSelectConversation(uuid as UUID);
-    }
-  }, [uuid]);
 
   return (
     <div>

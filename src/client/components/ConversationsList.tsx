@@ -1,16 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { Conversation, UUID } from "../../shared/types";
-import {
-  sendMessage,
-  resetSession,
-  createConversation,
-  getConversations,
-  getConversation,
-} from "../api/chat";
+import { UUID } from "../../shared/types";
 import { Button } from "./ui/button";
-import { Textarea } from "./ui/textarea";
-import { Card } from "./ui/card";
-import { ScrollArea } from "./ui/scroll-area";
 import {
   Drawer,
   DrawerContent,
@@ -18,10 +7,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./ui/drawer";
-import { Menu, Plus, MessageSquare, Loader2 } from "lucide-react";
-import { useParams, useNavigate } from "react-router";
-import { SignInPage } from "./signinpage";
-import { authClient } from "../lib/auth-client";
+import { Menu, Plus, MessageSquare } from "lucide-react";
 
 type ConversationsListProps = {
   activeSessionId: UUID | null;
